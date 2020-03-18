@@ -1,25 +1,25 @@
 package kosta.uni.vo;
 
 public class ProfessorSubject {
-	private int professor_id;
+	private Professor professor;
 	private Subject subject;
-
+	
 	public ProfessorSubject() {
 		super();
 	}
 
-	public ProfessorSubject(int professor_id, Subject subject) {
+	public ProfessorSubject(Professor professor, Subject subject) {
 		super();
-		this.professor_id = professor_id;
+		this.professor = professor;
 		this.subject = subject;
 	}
 
-	public int getProfessor_id() {
-		return professor_id;
+	public Professor getProfessor() {
+		return professor;
 	}
 
-	public void setProfessor_id(int professor_id) {
-		this.professor_id = professor_id;
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
 	}
 
 	public Subject getSubject() {
@@ -32,7 +32,7 @@ public class ProfessorSubject {
 
 	@Override
 	public String toString() {
-		return "ProfessorSubject [professor_id=" + professor_id + ", subject=" + subject + "]";
+		return "ProfessorSubject [professor=" + professor + ", subject=" + subject + "]";
 	}
-
+	
 }

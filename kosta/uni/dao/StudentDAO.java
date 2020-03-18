@@ -1,26 +1,15 @@
 package kosta.uni.dao;
 
 import java.sql.Connection;
-
 import java.sql.PreparedStatement;
-
 import java.sql.ResultSet;
+import java.sql.Statement;
 
-import java.util.ArrayList;
-
-import java.util.List;
-
+import kosta.uni.exception.ModifyException;
 import kosta.uni.exception.NotFoundException;
-
 import kosta.uni.sql.MyConnection;
-
-import kosta.uni.vo.CompleteSubject;
-
-import kosta.uni.vo.Grade;
 import kosta.uni.vo.Major;
 import kosta.uni.vo.Student;
-
-import kosta.uni.vo.Subject;
 
 //DB연결☆
 
@@ -37,48 +26,102 @@ public class StudentDAO {
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;		
+		ResultSet rs = null;
 
 		try {
 			con = MyConnection.getConnection();
-			
-			String selectByIdSQL = "SELECT stu.student_id, stu.name, stu.pwd, stu.accumulated_grade, stu.class_level,"
-				     + "m.major_number, m.major_name, m.necessary_grade , cs.subject_date,"
-				     + "g.grade_point, g.score, s.subject_code, s.subject_name, s.credit, s.limit, "
-				     + "s.start_time, s.major_number, s.run_time"
-				     + " FROM student stu JOIN major m ON stu.major_number = m.major_number"
-				     + " JOIN complete_subject cs ON cs.student_id = stu.student_id"
-				     + " JOIN grade g ON cs.grade_point = g.grade_point"
-				     + " JOIN subject s ON s.subject_code = cs.com_subject_code"
-				     + " WHERE stu.student_id = ?";
-			
-			pstmt = con.prepareStatement(selectByIdSQL);
-			rs = pstmt.executeQuery();
-			boolean isFirst = false;
-			
-			
-			
-			
-		} catch (Exception e) {
 
+			String selectByIdSQL = "SELECT name, pwd, accumulated_grade, class_level, major_number, major_name, necessary_grade"
+					+ " FROM studentview WHERE student_id = ?";
+
+			pstmt = con.prepareStatement(selectByIdSQL);
+			pstmt.setInt(1, id);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				String name = rs.getString("name");
+				String pwd = rs.getString("pwd");
+				int accumulated_grade = rs.getInt("accumulated_grade");
+				int class_level = rs.getInt("class_level");
+				int major_number = rs.getInt("major_number");
+				String major_name = rs.getString("major_name");
+				int necessary_grade = rs.getInt("necessary_grade");
+				Major major = new Major(major_number, major_name, necessary_grade);
+
+				return new Student(id, name, pwd, major, accumulated_grade, class_level);
+
+			} else {
+				throw new NotFoundException("그런학생없다구~");
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NotFoundException(e.getMessage());
 		} finally {
 			// 3) DB연결해제
 			MyConnection.close(con, pstmt, rs);
 		}
-		return null;
+
 	}
 
-	public static void main(String[] args) {
+	public void update(Student student) throws ModifyException { //
 
-		StudentDAO sdao = new StudentDAO();
+		Connection con = null;
+
+		Statement stmt = null;
 
 		try {
-			sdao.selectById(20171001);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+			con = MyConnection.getConnection();
+			
+			String updateSQL1 = "UPDATE student SET ";
+			String updateSQL2 = " WHERE student_id = '" + student.getStudent_id() + "'";
+			boolean flag = false;
+			if (student.getName() != null) {
+				if (flag) {
+					updateSQL1 += ",";					
+				}
+				updateSQL1 += "name = '" + student.getName() + "'";
+				flag = true;
+			}
 
+			if (student.getPwd() != null) {
+				if (flag) {
+					updateSQL1 += ",";
+				}
+				updateSQL1 += "pwd = '" + student.getPwd() + "'";
+				flag = true;
+			}
+			if (student.getMajor() != null) {
+				if (flag) {
+					updateSQL1 += ",";
+				}
+				updateSQL1 += "major = '" + student.getMajor() +"'";
+				flag = true;
+			}
+			if (student.getAccumulated_grade() != 0) {// 0이 아니면
+				if (flag) {
+					updateSQL1 += ",";
+				}
+				updateSQL1 += "accumulated_grade = '" + student.getAccumulated_grade()+"'";
+				flag = true;
+			}
+			if (student.getClass_level() != 0) {
+				if (flag) {
+					updateSQL1 += ",";
+				}
+				updateSQL1 += "class_level = '" + student.getClass_level() +"'";
+				flag = true;
+				
+			}
+			if (flag) {
+				stmt = con.createStatement();
+				System.out.println(updateSQL1 + updateSQL2);
+				stmt.executeUpdate(updateSQL1 + updateSQL2);
+			}
+		} catch (Exception e) {
+			throw new ModifyException(e.getMessage());
+
+		}
+
+	}	
+	
 }

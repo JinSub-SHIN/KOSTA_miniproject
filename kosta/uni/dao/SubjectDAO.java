@@ -116,7 +116,7 @@ public class SubjectDAO {
 				int credit = rs.getInt("credit");
 				int limit = rs.getInt("limit");
 				String start_time = rs.getString("start_time");
-				int subject_major = rs.getInt("subject_major");
+				int subject_major = rs.getInt("major_number");
 				int run_time = rs.getInt("run_time");
 				Subject subject = new Subject(subject_code, subject_name, credit, limit, start_time, subject_major,
 						run_time);
