@@ -55,7 +55,6 @@ public class ProfessorDAO {
 			return prof;
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new NotFoundException(e.getMessage());
 		} finally {
 			MyConnection.close(con, pstmt, rs);
@@ -100,7 +99,6 @@ public class ProfessorDAO {
 			pstmt.executeUpdate();
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new ModifyException("수정 실패");
 		} finally {
 			MyConnection.close(con, pstmt, null);

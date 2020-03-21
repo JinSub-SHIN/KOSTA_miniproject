@@ -7,72 +7,66 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MyConnection {
-
-	static Connection con = null;
-
 	/**
-	 * 오라클DB에 접속한다 localhost 호스트, ora1/ora1계정에 접속한다.
-	 * 
-	 * @return
-	 * @throws Exception
+	 * 오라클DB에 접속한다. localhost 호스트, ora1/ora1계정에 접속한다.
+	 * @return 성공시 Connection객체를 반환, 실패시 null
+	 * @throws Exception JDBC드라이버 오류이거나 계정 접속 실패시 오류 메시지를 갖는다
 	 */
 	public static Connection getConnection() throws Exception {
 		return getConnection("localhost", "kosta_uni", "uni");
 	}
 
 	/**
-	 * 오라클DB에 접속한다
-	 * 
-	 * @param host     접속할DB IP
-	 * @param user     접속할계정명
+	 * 오라클DB에 접속한다.
+	 * @param host 접속할 DB IP
+	 * @param user 접속할 계정명
 	 * @param password 접속할 계정 비밀번호
-	 * @return Connection객체
-	 * @throws Exception jdbc드라이버오류이거나 계정접속실패오류메시지를 갖는다.
+	 * @return 성공시 Connection객체를 반환, 실패시 null
+	 * @throws Exception JDBC드라이버 오류이거나 계정 접속 실패시 오류 메시지를 갖는다
 	 */
 	public static Connection getConnection(String host, String user, String password) throws Exception {
-
-		// 1)JDBC드라이버 로드
+		Connection con = null;
 		try {
+			// jdbc드라이버 로드
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 		} catch (ClassNotFoundException e) {
-			throw new Exception("JDBC드라이버 로드실패");
+			throw new ClassNotFoundException("JDBC드라이버 로드 실패");
 		}
-		// 2)DB연결
-		String ur1 = "jdbc:oracle:thin:@" + host + ":1521:xe";
-
+		// db연결
+		String url = "jdbc:oracle:thin:@" + host + ":1521:xe";
 		try {
-			con = DriverManager.getConnection(ur1, user, password);
+			con = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
-			throw new Exception(user + "계정 접속실패");
+			throw new SQLException(user + "계정 접속 실패");
 		}
-		// 3)반환
 		return con;
 	}
 
+	/**
+	 * 
+	 * @param con
+	 * @param rs
+	 * @param stmt
+	 * @throws Exception
+	 */
 	public static void close(Connection con, Statement stmt, ResultSet rs) {
-
 		if (rs != null) {
 			try {
 				rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
 			}
 		}
 		if (stmt != null) {
 			try {
 				stmt.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
 			}
 		}
 		if (con != null) {
 			try {
 				con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
 			}
 		}
-
 	}
-
 }

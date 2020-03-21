@@ -54,24 +54,18 @@ public class StudentDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new NotFoundException(e.getMessage());
 		} finally {
-			// 3) DB연결해제
 			MyConnection.close(con, pstmt, rs);
 		}
 
 	}
 
 	public void update(Student student) throws ModifyException { //
-
 		Connection con = null;
-
 		Statement stmt = null;
-
 		try {
 			con = MyConnection.getConnection();
-			
 			String updateSQL1 = "UPDATE student SET ";
 			String updateSQL2 = " WHERE student_id = '" + student.getStudent_id() + "'";
 			boolean flag = false;
@@ -94,7 +88,7 @@ public class StudentDAO {
 				if (flag) {
 					updateSQL1 += ",";
 				}
-				updateSQL1 += "major = '" + student.getMajor() +"'";
+				updateSQL1 += "major_number = '" + student.getMajor().getMajor_number() +"'";
 				flag = true;
 			}
 			if (student.getAccumulated_grade() != 0) {// 0이 아니면
@@ -114,7 +108,6 @@ public class StudentDAO {
 			}
 			if (flag) {
 				stmt = con.createStatement();
-				System.out.println(updateSQL1 + updateSQL2);
 				stmt.executeUpdate(updateSQL1 + updateSQL2);
 			}
 		} catch (Exception e) {

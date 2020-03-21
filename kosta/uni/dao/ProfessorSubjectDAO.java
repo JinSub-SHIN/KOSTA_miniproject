@@ -22,7 +22,7 @@ public class ProfessorSubjectDAO {
 	 * @return
 	 * @throws NotFoundException
 	 */
-	public static List<ProfessorSubject> selectById(int id) throws NotFoundException {
+	public List<ProfessorSubject> selectById(int id) throws NotFoundException {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -68,12 +68,12 @@ public class ProfessorSubjectDAO {
 
 				subjects.add(professorSubject);
 			}
-			if (subjects != null) {
-				return subjects;
-			} else
+			
+			if (subjects.size() == 0) {
 				throw new NotFoundException("id가 담당하는 과목이 없습니다.");
+			} 
+			return subjects;
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new NotFoundException("id검색 오류 : ");
 		} finally {
 			MyConnection.close(con, pstmt, rs);
@@ -88,7 +88,7 @@ public class ProfessorSubjectDAO {
 	 * @return
 	 * @throws NotFoundException
 	 */
-	public ProfessorSubject selectById(int id, String code) throws NotFoundException {
+	public ProfessorSubject selectByIdCode(int id, String code) throws NotFoundException {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
